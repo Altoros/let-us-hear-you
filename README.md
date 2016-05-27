@@ -48,7 +48,7 @@ Also note that since OpenWhisk is available at US South region only, we will nee
 1. Clone the repo:
 
   ```bash
-  git clone https://github.com/marvelousNinja/let-us-hear-you.git
+  git clone https://github.com/Altoros/let-us-hear-you.git
   ```
 
   The repo contains two branches:
