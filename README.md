@@ -754,19 +754,35 @@ Just like `sms-notifier` and `analyzer`, we can implement `text-extractor` as an
 	function recognizeSpeech(params) {
 	  return when.promise(function(resolve, reject) {
 	    var audioStream = request(params.attributes.path);
-	    var recognitionStream = request({
-	      url: params.speech_to_text_url + '/v1/recognize?continuous=true',
+	    var recognitionOptions = {
+	      url: params.speech_to_text_url + '/v1/recognize',
 	      method: 'POST',
 	      json: true,
+	      qs: {
+	        continuous: true
+	      },
 	      auth: {
 	        username: params.speech_to_text_username,
 	        password: params.speech_to_text_password
 	      }
-	    }, function(error, response, body) {
-	      error ? reject(error) : resolve([response, body])
-	    });
+	    };
 
-	    audioStream.pipe(recognitionStream);
+	    audioStream.on('response', function(res) {
+	      var contentType = res.headers['content-type'];
+
+	      if (contentType && contentType.indexOf('wav') !== -1) {
+	        res.headers['content-type'] = 'audio/wav';
+	        recognitionOptions.qs.model = 'en-US_NarrowbandModel';
+	      }
+
+	      var recognitionStream = request(
+	        recognitionOptions, function(error, response, body) {
+	          error ? reject(error) : resolve([response, body]);
+	        }
+	      );
+
+	      audioStream.pipe(recognitionStream);
+	    });
 	  });
 	}
 
@@ -817,9 +833,10 @@ Just like `sms-notifier` and `analyzer`, we can implement `text-extractor` as an
 	```
 
 1. Refresh browser window and try to import new audio file. Our implementation should support FLAC, WAV and OGG files. Here're some samples:
-	* Pulp Fiction fragment: [https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg](https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg)
-	* TBD
-	* TBD
+	* Pulp Fiction OGG fragment: [https://upload.wikimedia.org/wikipedia/en/1/1a/End_of_Ezekiel.ogg](https://upload.wikimedia.org/wikipedia/en/1/1a/End_of_Ezekiel.ogg)
+	* Bluemix documentation FLAC sample: [https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/speech-to-text/api/v1/audio-file.flac](https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/speech-to-text/api/v1/audio-file.flac)
+	* Some quotes in WAV from the Godfather (the website actually contains samples for a large selection of movies): [http://www.rosswalker.co.uk/movie_sounds/godfather.htm](http://www.rosswalker.co.uk/movie_sounds/godfather.htm)
+	* Watson Text to Speech Demo app (you can use Watson itself to generate audio samples from the text): [https://text-to-speech-demo.mybluemix.net/](https://text-to-speech-demo.mybluemix.net/)
 
 1. Extracting text usually takes some time, but if you refresh the page in 10 seconds, you should see something like this:
 

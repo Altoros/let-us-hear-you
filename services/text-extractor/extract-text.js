@@ -16,19 +16,35 @@ function processEvent(params) {
 function recognizeSpeech(params) {
   return when.promise(function(resolve, reject) {
     var audioStream = request(params.attributes.path);
-    var recognitionStream = request({
-      url: params.speech_to_text_url + '/v1/recognize?continuous=true',
+    var recognitionOptions = {
+      url: params.speech_to_text_url + '/v1/recognize',
       method: 'POST',
       json: true,
+      qs: {
+        continuous: true
+      },
       auth: {
         username: params.speech_to_text_username,
         password: params.speech_to_text_password
       }
-    }, function(error, response, body) {
-      error ? reject(error) : resolve([response, body])
-    });
+    };
 
-    audioStream.pipe(recognitionStream);
+    audioStream.on('response', function(res) {
+      var contentType = res.headers['content-type'];
+
+      if (contentType && contentType.indexOf('wav') !== -1) {
+        res.headers['content-type'] = 'audio/wav';
+        recognitionOptions.qs.model = 'en-US_NarrowbandModel';
+      }
+
+      var recognitionStream = request(
+        recognitionOptions, function(error, response, body) {
+          error ? reject(error) : resolve([response, body]);
+        }
+      );
+
+      audioStream.pipe(recognitionStream);
+    });
   });
 }
 
