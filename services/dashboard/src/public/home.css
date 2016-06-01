@@ -95,6 +95,8 @@ body {
 
   color: #FFFFFF;
   background-color: #795548;
+
+  word-wrap: break-word;
 }
 
 .feedback__details {

@@ -23,9 +23,10 @@ Here's a list of software and external service accounts you would need to comple
 * IBM Bluemix account: [https://bluemix.net](https://bluemix.net)
 * Cloud Foundry CLI: [https://github.com/cloudfoundry/cli/releases](https://github.com/cloudfoundry/cli/releases)
 * OpenWhisk (closed beta) access: [https://bluemix.net/openwhisk](https://bluemix.net/openwhisk)
+* Python 2.7.x with `pip` included
 * OpenWhisk CLI: [https://bluemix.net/openwhisk/cli](https://bluemix.net/openwhisk/cli)
 * Twilio account: [https://www.twilio.com/try-twilio](https://www.twilio.com/try-twilio)
-* Node.js 4.4.x
+* Node.js 4.4.x with `npm` included
 * Git
 
 Since labwork heavily relies on the capabilities of OpenWhisk, it might be a good idea to walk through the quick introduction here: [https://console.ng.bluemix.net/docs/openwhisk/openwhisk_reference.html](https://console.ng.bluemix.net/docs/openwhisk/openwhisk_reference.html).
@@ -123,13 +124,13 @@ Also note that since OpenWhisk is available at US South region only, we will nee
 	```bash
 	# Linux
 	cp services/dashboard/.env.sample services/dashboard/.env
-	cp services/config.env.sample config.env
+	cp services/config.env.sample services/config.env
 	```
 
 	```batch
 	:: Windows
 	copy services/dashboard/.env.sample services/dashboard/.env
-	copy services/config.env.sample config.env
+	copy services/config.env.sample services/config.env
 	```
 
 1. Using credentials of created services, fill out created config files. You can get credentials for Bluemix services with:
